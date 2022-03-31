@@ -29,11 +29,22 @@ def main():
     # Why not start by trying to print this configuration out using the
     # `print_board` helper function? (See the `util.py` source code for
     # usage information).
-    print(data["board"])
+    
+    # Start solution
+    # Convert board from data into dict with coords as keys and values as values
     board_dict = {}
     for i in data["board"]:
         board_dict[i[1], i[2]] = i[0]
-    print(board_dict)
+
+    # Retrieve start and goal coords from data
+    start = data["start"]
+    goal = data["goal"]
+    
+    # Add start and goal coords to board_dict
+    board_dict[start[0], start[1]] = "Start"
+    board_dict[goal[0], goal[1]] = "Goal"
+    
+    # print board
     print_board(data["n"], board_dict)
 
 
