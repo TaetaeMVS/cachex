@@ -14,6 +14,7 @@ import json
 # then import from them like this:
 from search.util import print_board, print_coordinate
 
+
 def main():
     try:
         with open(sys.argv[1]) as file:
@@ -28,3 +29,8 @@ def main():
     # Why not start by trying to print this configuration out using the
     # `print_board` helper function? (See the `util.py` source code for
     # usage information).
+
+    print("hello")
+    print(data)
+
+
