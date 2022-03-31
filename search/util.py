@@ -146,6 +146,3 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
 
     # Print to terminal (with optional args forwarded)
     print(output, **kwargs)
-
-
-# helper functions taken from https://www.redblobgames.com/grids/hexagons/

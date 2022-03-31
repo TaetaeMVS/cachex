@@ -13,7 +13,7 @@ import json
 # inside the `search` directory (like this one and `util.py`) and
 # then import from them like this:
 from search.util import print_board, print_coordinate
-
+from search.hex import Hexagon, Board
 
 def main():
     try:
@@ -44,7 +44,17 @@ def main():
     board_dict[start[0], start[1]] = "Start"
     board_dict[goal[0], goal[1]] = "Goal"
     
+    # Put placeholder values in every other hex
+    for i in range(data["n"]):
+        for j in range(data["n"]):
+            if (i, j) not in board_dict:
+                board_dict[i, j] = str(i) + ',' + str(j)
+
+    # Convert to a 2D array of Hexagons to represent the game board
+    game_board = Board(data["n"], board_dict)
+    print(game_board)
+          
     # print board
-    print_board(data["n"], board_dict)
+    print_board(data["n"], game_board.convert())
 
 
