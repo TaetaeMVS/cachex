@@ -29,8 +29,11 @@ def main():
     # Why not start by trying to print this configuration out using the
     # `print_board` helper function? (See the `util.py` source code for
     # usage information).
-
-    print("hello")
-    print(data)
+    print(data["board"])
+    board_dict = {}
+    for i in data["board"]:
+        board_dict[i[1], i[2]] = i[0]
+    print(board_dict)
+    print_board(data["n"], board_dict)
 
 
