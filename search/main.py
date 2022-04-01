@@ -55,6 +55,6 @@ def main():
     print(game_board)
           
     # print board
-    print_board(data["n"], game_board.convert())
+    print_board(data["n"], game_board.convert(), "ANSI = True", True)
 
 

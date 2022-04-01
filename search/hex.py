@@ -18,7 +18,6 @@ class Board:
         n = self.size
         for i in range(n):
             for j in range(n):
-                print([self.hexes[i, j].get_coords()], self.hexes[i, j].value)
                 if self.hexes[i, j].value != [i, j]:
                     new_board[i, j] = self.hexes[i, j].value
         return new_board
@@ -53,5 +52,6 @@ class Hexagon:
     def is_neighbour(self, Hexagon: object) -> bool:
         return abs(self.x - Hexagon.x) + abs(self.y - Hexagon.y) == 1
     
+    # Function to return coordinates of hexagon as a list
     def get_coords(self):
         return [self.x, self.y]
