@@ -55,6 +55,11 @@ def main():
     print(game_board)
     print("Start coords: " + str(game_board.start.get_coords()))
     print("Goal coords: " + str(game_board.goal.get_coords()))
+<<<<<<< HEAD
+=======
+    # game_board.heuristics()
+    # print board
+>>>>>>> main
     print_board(data["n"], game_board.convert(), "ANSI = True", True)
     # print board
 
