@@ -4,10 +4,16 @@ class Board:
         self.size = size
         self.input = input
         self.hexes = {}
+        self.start = None
+        self.goal = None
         for i in range(size):
             for j in range(size):
                 if (i, j) in input:
                     self.hexes[i, j] = Hexagon(i, j, input[i, j])
+                    if input[i, j] == "Start":
+                        self.start = self.hexes[i, j]
+                    if input[i, j] == "Goal":
+                        self.goal = self.hexes[i, j]
                 else:
                     self.hexes[i, j] = Hexagon(i, j, str(i) + ',' + str(j))
         

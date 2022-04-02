@@ -53,7 +53,8 @@ def main():
     # Convert to a 2D array of Hexagons to represent the game board
     game_board = Board(data["n"], board_dict)
     print(game_board)
-          
+    print("Start coords: " + str(game_board.start.get_coords()))
+    print("Goal coords: " + str(game_board.goal.get_coords()))
     # print board
     print_board(data["n"], game_board.convert(), "ANSI = True", True)
 
