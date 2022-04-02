@@ -37,7 +37,7 @@ class Board:
                 if self.hexes[i, j].value == "Goal" or self.hexes[i, j].value == "Start" or self.hexes[i, j].value == "b":
                     continue
                 else:
-                    self.hexes[i, j] = self.hexes[i, j].heuristic
+                    self.hexes[i, j].value = self.hexes[i, j].heuristic()
 
     # Function to update board with coordinate values for non goal, start or blocked hexes
     def coords(self):
@@ -46,7 +46,7 @@ class Board:
                 if self.hexes[i, j].value == "Goal" or self.hexes[i, j].value == "Start" or self.hexes[i, j].value == "b":
                     continue
                 else:
-                    self.hexes[i, j] = self.hexes[i, j].coords
+                    self.hexes[i, j].value = str(self.hexes[i, j].get_coords()[0]) + ',' + str(self.hexes[i, j].get_coords()[1])
 
 # Class that represents a hexagon
 class Hexagon:
