@@ -52,14 +52,15 @@ def main():
 
     # Convert to a 2D array of Hexagons to represent the game board
     game_board = Board(data["n"], board_dict)
-    print(game_board)
-    print("Start coords: " + str(game_board.start.get_coords()))
-    print("Goal coords: " + str(game_board.goal.get_coords()))
-    print(game_board.hexes[4, 2].get_coords())
+
+    # Run a star algorithm over game board 
     game_board.a_star()
+
+    # Reconstruct solution path from a star algorithm
     game_board.reconstruct_path(game_board.came_from, game_board.start.get_coords(), game_board.goal.get_coords())
-    print(game_board.solution)
-    print_board(data["n"], game_board.convert(), "ANSI = True", True)
-    # print board
+    # print_board(data["n"], game_board.convert(), "ANSI = True", True)
+    
+    # Output solution
+    game_board.output_solution()
 
 

@@ -8,7 +8,7 @@ class Board:
         self.goal = None
         self.came_from = None
         self.cost_so_far = None
-        self.solution = None
+        self.solution = []
         for i in range(size):
             for j in range(size):
                 if (i, j) in input:
@@ -90,9 +90,10 @@ class Board:
         path.reverse()
         self.solution = path
 
-
-
-
+    def output_solution(self):
+        print(self.cost_so_far[self.goal.get_coords()])
+        for i in range(len(self.solution)):
+            print(self.solution[i])
 
 # Class that represents a hexagon
 class Hexagon:
