@@ -7,7 +7,7 @@ class Board:
         self.start = None
         self.goal = None
         self.came_from = None
-        self.cost_so_far = None
+        self.cost_so_far = {}
         self.solution = []
         for i in range(size):
             for j in range(size):
@@ -91,6 +91,8 @@ class Board:
         self.solution = path
 
     def output_solution(self):
+        if len(self.cost_so_far) == 0:
+            return 0
         print(self.cost_so_far[self.goal.get_coords()])
         for i in range(len(self.solution)):
             print(self.solution[i])
