@@ -1,3 +1,14 @@
+<<<<<<< HEAD
+=======
+private
+archive
+
+.DS_Store
+# Documentatino notebooks since they're copied over when the build_docs script
+# is executed
+doc/notebooks/*
+
+>>>>>>> c808472ced1aaf91777d5cf5fb4937763a4fece1
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -20,8 +31,11 @@ parts/
 sdist/
 var/
 wheels/
+<<<<<<< HEAD
 pip-wheel-metadata/
 share/python-wheels/
+=======
+>>>>>>> c808472ced1aaf91777d5cf5fb4937763a4fece1
 *.egg-info/
 .installed.cfg
 *.egg
@@ -40,14 +54,20 @@ pip-delete-this-directory.txt
 # Unit test / coverage reports
 htmlcov/
 .tox/
+<<<<<<< HEAD
 .nox/
+=======
+>>>>>>> c808472ced1aaf91777d5cf5fb4937763a4fece1
 .coverage
 .coverage.*
 .cache
 nosetests.xml
 coverage.xml
 *.cover
+<<<<<<< HEAD
 *.py,cover
+=======
+>>>>>>> c808472ced1aaf91777d5cf5fb4937763a4fece1
 .hypothesis/
 .pytest_cache/
 
@@ -59,7 +79,10 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+<<<<<<< HEAD
 db.sqlite3-journal
+=======
+>>>>>>> c808472ced1aaf91777d5cf5fb4937763a4fece1
 
 # Flask stuff:
 instance/
@@ -70,6 +93,10 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+<<<<<<< HEAD
+=======
+doc/_build/
+>>>>>>> c808472ced1aaf91777d5cf5fb4937763a4fece1
 
 # PyBuilder
 target/
@@ -77,6 +104,7 @@ target/
 # Jupyter Notebook
 .ipynb_checkpoints
 
+<<<<<<< HEAD
 # IPython
 profile_default/
 ipython_config.py
@@ -97,6 +125,13 @@ __pypackages__/
 # Celery stuff
 celerybeat-schedule
 celerybeat.pid
+=======
+# pyenv
+.python-version
+
+# celery beat schedule file
+celerybeat-schedule
+>>>>>>> c808472ced1aaf91777d5cf5fb4937763a4fece1
 
 # SageMath parsed files
 *.sage.py
@@ -122,6 +157,7 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+<<<<<<< HEAD
 .dmypy.json
 dmypy.json
 
@@ -131,3 +167,12 @@ dmypy.json
 AI_2022_Project_PartA.pdf:Zone.Identifier
 AI_cachex_spec.pdf:Zone.Identifier
 .vscode
+=======
+
+# vscode
+.vscode/
+
+# PyCharm / IDEA
+.idea/
+
+>>>>>>> c808472ced1aaf91777d5cf5fb4937763a4fece1
