@@ -14,5 +14,3 @@ services:
         container_name: selfplay
         cap_add:
             - SYS_PTRACE
-        
-

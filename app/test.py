@@ -10,8 +10,8 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 import random
 import argparse
 
-from stable_baselines import logger
-from stable_baselines.common import set_global_seeds
+from stable_baselines3.common.logger import Logger, configure
+# from stable_baselines3.common import set_global_seeds
 
 from utils.files import load_model, write_results
 from utils.register import get_environment
@@ -22,17 +22,17 @@ import config
 
 def main(args):
 
-  logger.configure(config.LOGDIR)
+  Logger = configure(config.LOGDIR)
 
   if args.debug:
-    logger.set_level(config.DEBUG)
+    Logger.set_level(config.DEBUG)
   else:
-    logger.set_level(config.INFO)
+    Logger.set_level(config.INFO)
     
   #make environment
   env = get_environment(args.env_name)(verbose = args.verbose, manual = args.manual)
   env.seed(args.seed)
-  set_global_seeds(args.seed)
+  # set_global_seeds(args.seed)
 
   total_rewards = {}
 
@@ -50,6 +50,7 @@ def main(args):
     raise Exception(f'{len(args.agents)} players specified but this is a {env.n_players} player game!')
 
   for i, agent in enumerate(args.agents):
+    print(agent)
     if agent == 'human':
       agent_obj = Agent('human')
     elif agent == 'rules':
@@ -64,7 +65,7 @@ def main(args):
     total_rewards[agent_obj.id] = 0
   
   #play games
-  logger.info(f'\nPlaying {args.games} games...')
+  Logger.info(f'\nPlaying {args.games} games...')
   for game in range(args.games):
     players = agents[:]
 
@@ -75,17 +76,21 @@ def main(args):
     done = False
     
     for i, p in enumerate(players):
-      logger.debug(f'Player {i+1} = {p.name}')
+      print(f'Player {i+1} = {p.name}')
 
     while not done:
-
+      print(agents)
+      print("current_player_num =", env.current_player_num)
       current_player = players[env.current_player_num]
+      
       env.render()
-      logger.debug(f'\nCurrent player name: {current_player.name}')
+      print(f'\nCurrent player name: {current_player.name}')
+      print(f'Current player id: {current_player.id}')
+      print(f'Current player model: {current_player.model}')
 
       if args.recommend and current_player.name in ['human', 'rules']:
         # show recommendation from last loaded model
-        logger.debug(f'\nRecommendation by {ppo_agent.name}:')
+        print(f'\nRecommendation by {ppo_agent.name}:')
         action = ppo_agent.choose_action(env, choose_best_action = True, mask_invalid_actions = True)
 
       if current_player.name == 'human':
@@ -97,24 +102,25 @@ def main(args):
           # for MulitDiscrete action input as list TODO
           action = eval(action)
       elif current_player.name == 'rules':
-        logger.debug(f'\n{current_player.name} model choices')
+        print(f'\n{current_player.name} model choices')
         action = current_player.choose_action(env, choose_best_action = False, mask_invalid_actions = True)
       else:
-        logger.debug(f'\n{current_player.name} model choices')
+        print(f'\n{current_player.name} model choices')
         action = current_player.choose_action(env, choose_best_action = args.best, mask_invalid_actions = True)
 
       obs, reward, done, _ = env.step(action)
 
-      for r, player in zip(reward, players):
-        total_rewards[player.id] += r
-        player.points += r
+      print("reward:", reward)
+      print("players:", players)
+      total_rewards[current_player.id] += reward
+      current_player.points += reward
 
       if args.cont:
         input('Press any key to continue')
     
     env.render()
 
-    logger.info(f"Played {game + 1} games: {total_rewards}")
+    Logger.info(f"Played {game + 1} games: {total_rewards}")
 
     if args.write_results:
       write_results(players, game, args.games, env.turns_taken)

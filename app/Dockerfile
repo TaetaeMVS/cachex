@@ -1,5 +1,6 @@
-FROM ubuntu:bionic-20200219 as base
+FROM nvidia/cuda:11.6.2-cudnn8-devel-ubuntu20.04 as base
 
+ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get -y install ssh
 RUN apt-get -y install python3-pip
@@ -16,11 +17,12 @@ RUN useradd -ms /bin/bash selfplay
 USER selfplay
 ENV PATH="/home/selfplay/.local/bin:${PATH}"
 WORKDIR /app
-
-
+ENV NVIDIA_VISIBLE_DEVICES all
+ENV NVIDIA_DRIVER_CAPABILITIES compute,utility
 COPY --chown=selfplay:selfplay ./app/requirements.txt /app
 RUN pip3 install -r /app/requirements.txt
-
+RUN pip3 install stable_baselines3
+RUN pip3 install mpi4py
 COPY --chown=selfplay:selfplay ./app .
 
 ENV PYTHONIOENCODING=utf-8

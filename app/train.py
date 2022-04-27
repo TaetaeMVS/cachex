@@ -7,18 +7,17 @@ import tensorflow as tf
 tf.get_logger().setLevel('INFO')
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-
 import argparse
 import time
 from shutil import copyfile
 from mpi4py import MPI
 
-from stable_baselines.ppo1 import PPO1
-from stable_baselines.common.callbacks import EvalCallback
+from stable_baselines3.common.callbacks import EvalCallback
+from stable_baselines3 import PPO
 
-from stable_baselines.common.vec_env import DummyVecEnv
-from stable_baselines.common import set_global_seeds
-from stable_baselines import logger
+from stable_baselines3.common.vec_env import DummyVecEnv
+#from stable_baselines3 import set_global_seeds
+from stable_baselines3.common.logger import Logger, configure
 
 from utils.callbacks import SelfPlayCallback
 from utils.files import reset_logs, reset_models
@@ -26,7 +25,6 @@ from utils.register import get_network_arch, get_environment
 from utils.selfplay import selfplay_wrapper
 
 import config
-
 def main(args):
 
   rank = MPI.COMM_WORLD.Get_rank()
@@ -41,26 +39,26 @@ def main(args):
     reset_logs(model_dir)
     if args.reset:
       reset_models(model_dir)
-    logger.configure(config.LOGDIR)
+    Logger = configure(config.LOGDIR)
   else:
-    logger.configure(format_strs=[])
+    Logger =configure(format_strs=[])
 
   if args.debug:
-    logger.set_level(config.DEBUG)
+    Logger.set_level(config.DEBUG)
   else:
     time.sleep(5)
-    logger.set_level(config.INFO)
+    Logger.set_level(config.INFO)
 
   workerseed = args.seed + 10000 * MPI.COMM_WORLD.Get_rank()
-  set_global_seeds(workerseed)
+  #set_global_seeds(workerseed)
 
-  logger.info('\nSetting up the selfplay training environment opponents...')
+  Logger.info('\nSetting up the selfplay training environment opponents...')
   base_env = get_environment(args.env_name)
   env = selfplay_wrapper(base_env)(opponent_type = args.opponent_type, verbose = args.verbose)
   env.seed(workerseed)
 
   
-  CustomPolicy = get_network_arch(args.env_name)
+  # CustomPolicy = get_network_arch(args.env_name)
 
   params = {'gamma':args.gamma
     , 'timesteps_per_actorbatch':args.timesteps_per_actorbatch
@@ -79,14 +77,14 @@ def main(args):
   time.sleep(5) # allow time for the base model to be saved out when the environment is created
 
   if args.reset or not os.path.exists(os.path.join(model_dir, 'best_model.zip')):
-    logger.info('\nLoading the base PPO agent to train...')
-    model = PPO1.load(os.path.join(model_dir, 'base.zip'), env, **params)
+    Logger.info('\nLoading the base PPO agent to train...')
+    model = PPO.load(os.path.join(model_dir, 'base.zip'), env, **params)
   else:
-    logger.info('\nLoading the best_model.zip PPO agent to continue training...')
-    model = PPO1.load(os.path.join(model_dir, 'best_model.zip'), env, **params)
+    Logger.info('\nLoading the best_model.zip PPO agent to continue training...')
+    model = PPO.load(os.path.join(model_dir, 'best_model.zip'), env, **params)
 
   #Callbacks
-  logger.info('\nSetting up the selfplay evaluation environment opponents...')
+  Logger.info('\nSetting up the selfplay evaluation environment opponents...')
   callback_args = {
     'eval_env': selfplay_wrapper(base_env)(opponent_type = args.opponent_type, verbose = args.verbose),
     'best_model_save_path' : config.TMPMODELDIR,
@@ -99,7 +97,7 @@ def main(args):
   }
 
   if args.rules:  
-    logger.info('\nSetting up the evaluation environment against the rules-based agent...')
+    Logger.info('\nSetting up the evaluation environment against the rules-based agent...')
     # Evaluate against a 'rules' agent as well
     eval_actual_callback = EvalCallback(
       eval_env = selfplay_wrapper(base_env)(opponent_type = 'rules', verbose = args.verbose),
@@ -114,7 +112,7 @@ def main(args):
   # Evaluate the agent against previous versions
   eval_callback = SelfPlayCallback(args.opponent_type, args.threshold, args.env_name, **callback_args)
 
-  logger.info('\nSetup complete - commencing learning...\n')
+  Logger.info('\nSetup complete - commencing learning...\n')
 
   model.learn(total_timesteps=int(1e9), callback=[eval_callback], reset_num_timesteps = False, tb_log_name="tb")
 
@@ -134,7 +132,7 @@ def cli() -> None:
 
   parser.add_argument("--reset", "-r", action = 'store_true', default = False
                 , help="Start retraining the model from scratch")
-  parser.add_argument("--opponent_type", "-o", type = str, default = 'mostly_best'
+  parser.add_argument("--opponent_type", "-o", type = str, default = 'random'
               , help="best / mostly_best / random / base / rules - the type of opponent to train against")
   parser.add_argument("--debug", "-d", action = 'store_true', default = False
               , help="Debug logging")

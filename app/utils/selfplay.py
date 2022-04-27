@@ -7,8 +7,7 @@ from utils.agents import Agent
 
 import config
 
-from stable_baselines import logger
-
+from stable_baselines3.common.logger import Logger, configure
 def selfplay_wrapper(env):
     class SelfPlayEnv(env):
         # wrapper over the normal single player env, but loads the best self play model
@@ -19,6 +18,8 @@ def selfplay_wrapper(env):
             self.best_model_name = get_best_model_name(self.name)
 
         def setup_opponents(self):
+            self.opponent_models = load_all_models(self)
+            self.best_model_name = get_best_model_name(self.name)
             if self.opponent_type == 'rules':
                 self.opponent_agent = Agent('rules')
             else:
@@ -55,7 +56,7 @@ def selfplay_wrapper(env):
             self.agents[self.agent_player_num] = None
             try:
                 #if self.players is defined on the base environment
-                logger.debug(f'Agent plays as Player {self.players[self.agent_player_num].id}')
+                Logger.debug(f'Agent plays as Player {self.players[self.agent_player_num].id}')
             except:
                 pass
 
@@ -67,7 +68,7 @@ def selfplay_wrapper(env):
             if self.current_player_num != self.agent_player_num:   
                 self.continue_game()
 
-            return self.observation
+            return self.state
 
         @property
         def current_agent(self):
@@ -79,11 +80,11 @@ def selfplay_wrapper(env):
             done = None
 
             while self.current_player_num != self.agent_player_num:
-                self.render()
+                # self.render()
                 action = self.current_agent.choose_action(self, choose_best_action = False, mask_invalid_actions = False)
                 observation, reward, done, _ = super(SelfPlayEnv, self).step(action)
-                logger.debug(f'Rewards: {reward}')
-                logger.debug(f'Done: {done}')
+                print(f'Rewards: {reward}')
+                print(f'Done: {done}')
                 if done:
                     break
 
@@ -91,20 +92,20 @@ def selfplay_wrapper(env):
 
 
         def step(self, action):
-            self.render()
+            # self.render()
             observation, reward, done, _ = super(SelfPlayEnv, self).step(action)
-            logger.debug(f'Action played by agent: {action}')
-            logger.debug(f'Rewards: {reward}')
-            logger.debug(f'Done: {done}')
+            print(f'Action played by agent: {action}')
+            print(f'Rewards: {reward}')
+            print(f'Done: {done}')
 
             if not done:
                 package = self.continue_game()
                 if package[0] is not None:
                     observation, reward, done, _ = package
 
-
-            agent_reward = reward[self.agent_player_num]
-            logger.debug(f'\nReward To Agent: {agent_reward}')
+            print("reward: ", reward)
+            agent_reward = reward
+            print(f'\nReward To Agent: {agent_reward}')
 
             if done:
                 self.render()
