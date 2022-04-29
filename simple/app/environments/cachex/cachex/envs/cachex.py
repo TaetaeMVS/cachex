@@ -12,11 +12,14 @@ from gym.utils import seeding
 
 
 from stable_baselines3.common import logger
+
+
 class Player():
     def __init__(self, id, player_color):
         self.id = id
         self.player_color = player_color
         self.points = 0
+
 
 def make_random_policy(np_random):
     def random_policy(state):
@@ -27,6 +30,7 @@ def make_random_policy(np_random):
         a = np_random.randint(len(possible_moves))
         return possible_moves[a]
     return random_policy
+
 
 class HexEnv(gym.Env):
     """
@@ -48,6 +52,10 @@ class HexEnv(gym.Env):
         self.current_player_num = 1
         self.np_random = np.random.RandomState()
         self.illegal_move_mode = 'lose'
+        self.state = None
+        self.to_play = HexEnv.RED
+        self.players = [Player(1, HexEnv.RED), Player(2, HexEnv.BLUE)]
+        self.done = False
         colormap = {
             'red': HexEnv.RED,
             'blue': HexEnv.BLUE,
@@ -64,19 +72,16 @@ class HexEnv(gym.Env):
         self.action_space = spaces.Discrete(self.board_size ** 2 + 1)
         observation = self.reset()
         self.observation_space = spaces.Box(np.zeros(observation.shape), np.ones(observation.shape))
-
         self.seed()
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
-
         # Update the random policy if needed
         if isinstance(self.opponent_type, str):
             if self.opponent_type == 'random':
                 self.opponent_type = make_random_policy(self.np_random)
         else:
             self.opponent_type = self.opponent_type
-
         return [seed]
 
     def reset(self, board_size = 6):
